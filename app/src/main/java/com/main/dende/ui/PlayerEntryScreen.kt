@@ -11,7 +11,11 @@ fun PlayerEntryScreen(onPlayersEntered: (List<String>) -> Unit) {
     var currentName by remember { mutableStateOf("") }
     val players = remember { mutableStateListOf<String>() }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .statusBarsPadding()
+    ) {
         Text("Enter Player Names", style = MaterialTheme.typography.headlineSmall)
         Row {
             TextField(value = currentName, onValueChange = { currentName = it }, label = { Text("Name") })
