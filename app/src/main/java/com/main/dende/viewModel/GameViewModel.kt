@@ -15,8 +15,11 @@ import kotlin.random.Random
 class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     private val context = getApplication<Application>().applicationContext
-    private var allTasks: Map<String, List<String>> = emptyMap()
-    private var taskList: List<String> = emptyList()
+    private var _allTasks: Map<String, List<String>> = emptyMap()
+    val allCategories: List<String> get() = _allTasks.keys.toList()
+
+    private var gameTasks: MutableList<String> = mutableListOf()
+    private val usedTasks = mutableSetOf<String>()
 
     private val _selectedCategories = MutableStateFlow<List<String>>(emptyList())
     val selectedCategories: StateFlow<List<String>> = _selectedCategories
@@ -33,14 +36,23 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _gameEnded = MutableStateFlow(false)
     val gameEnded = _gameEnded.asStateFlow()
 
-    private val usedTasks = mutableSetOf<String>()
-    private val gameTasks = mutableListOf<String>()
+    private val _categoriesConfirmed = MutableStateFlow(false)
+    val categoriesConfirmed: StateFlow<Boolean> = _categoriesConfirmed
+
+    init {
+        loadAllTasks()
+    }
+
+    fun confirmCategories() {
+        _categoriesConfirmed.value = true
+    }
 
     fun setPlayers(playerList: List<String>) {
         _players.value = playerList
+        startGame()
     }
 
-    private fun loadAllTasks() {
+    fun loadAllTasks() {
         viewModelScope.launch {
             val inputStream = context.assets.open("tasks.json")
             val jsonStr = inputStream.bufferedReader().use { it.readText() }
@@ -53,7 +65,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 loaded[key] = List(list.length()) { list.getString(it) }
             }
 
-            allTasks = loaded
+            _allTasks = loaded
         }
     }
 
@@ -69,7 +81,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _gameEnded.value = false
 
         val selected = _selectedCategories.value
-        val tasks = selected.flatMap { category -> allTasks[category] ?: emptyList() }.shuffled()
+        val tasks = selected.flatMap { category -> _allTasks[category] ?: emptyList() }.shuffled()
 
         gameTasks.addAll(tasks.take(20))
         _taskIndex.value = -1
@@ -90,7 +102,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun replacePlaceholders(task: String): String {
-        // Replace player placeholder
         val players = _players.value
         val taskPlayerCount = task.split("player").size - 1
         val chosenPlayers = players.shuffled().take(taskPlayerCount)
@@ -99,7 +110,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             transformedTask = replacePlayer(transformedTask, playerName, index)
         }
 
-        // Replace shots placeholder
         val maxShots = AppConfig.MAX_SHOTS
         val taskShotsCount = task.split("shot").size - 1
         var index = 0
@@ -117,9 +127,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun replaceShot(task: String, shots: Int, number: Int): String {
-        var shotText = if (shots == 1) { "$shots shot"} // one shot
-        else { "$shots shots"}           // multiple shots
-
+        val shotText = if (shots == 1) "$shots shot" else "$shots shots"
         return task.replace("{shot$number}", shotText)
     }
 
