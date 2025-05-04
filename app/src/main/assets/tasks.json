@@ -1,11 +1,11 @@
 {
   "Normal": [
-    "{player0} neemt {shot}",
-    "Iedereen die een pet draagt krijgt {shot}",
-    "Als {player0} {shot} neemt moeten de overige spelers een slok nemen"
+    "{player0} neemt {shot0}",
+    "Iedereen die een pet draagt krijgt {shot0}",
+    "Als {player0} {shot0} neemt moeten de overige spelers een slok nemen"
   ],
   "Games": [
-    "{player0} raad wat {player1} zijn favoriete video game is. Als je het goed hebt mag je {shot} uitdelen",
-    "Degene die vandaag op social media hebben gezeten nemen {shot}"
+    "{player0} raad wat {player1} zijn favoriete video game is. Als je het goed hebt mag je {shot0} uitdelen",
+    "Degene die vandaag op social media hebben gezeten nemen {shot0}"
   ]
 }
