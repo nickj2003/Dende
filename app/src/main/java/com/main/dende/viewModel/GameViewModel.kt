@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.main.dende.utils.AppConfig
+import com.main.dende.utils.LinkedList
+import com.main.dende.utils.Node
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +20,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private var _allTasks: Map<String, List<String>> = emptyMap()
     val allCategories: List<String> get() = _allTasks.keys.toList()
 
-    private var gameTasks: MutableList<String> = mutableListOf()
-    private val usedTasks = mutableSetOf<String>()
+    var gameTasks: LinkedList<String> = LinkedList<String>()
 
     private val _selectedCategories = MutableStateFlow<List<String>>(emptyList())
     val selectedCategories: StateFlow<List<String>> = _selectedCategories
@@ -27,11 +28,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _players = MutableStateFlow<List<String>>(emptyList())
     val players = _players.asStateFlow()
 
-    private val _currentTask = MutableStateFlow<String?>(null)
+    private val _currentTask = MutableStateFlow<Node<String>?>(null)
     val currentTask = _currentTask.asStateFlow()
-
-    private val _taskIndex = MutableStateFlow(-1)
-    val taskIndex: StateFlow<Int> = _taskIndex
 
     private val _gameEnded = MutableStateFlow(false)
     val gameEnded = _gameEnded.asStateFlow()
@@ -45,11 +43,11 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     fun confirmCategories() {
         _categoriesConfirmed.value = true
+        startGame()
     }
 
     fun setPlayers(playerList: List<String>) {
         _players.value = playerList
-        startGame()
     }
 
     fun loadAllTasks() {
@@ -77,30 +75,31 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun startGame() {
         gameTasks.clear()
-        usedTasks.clear()
         _gameEnded.value = false
 
         val selected = _selectedCategories.value
         val tasks = selected.flatMap { category -> _allTasks[category] ?: emptyList() }.shuffled()
 
-        gameTasks.addAll(tasks.take(20))
-        _taskIndex.value = -1
-        showNextTask()
+        createGameTasks(tasks.take(AppConfig.TASKS_PER_ROUND))
+        _currentTask.value = gameTasks.tail
     }
 
     fun showNextTask() {
-        if (gameTasks.isEmpty()) {
+        if (_currentTask.value?.next == null) {
             _gameEnded.value = true
             return
+        } else {
+            _currentTask.value = _currentTask.value?.next
         }
-
-        _taskIndex.value += 1
-        var task = gameTasks.removeAt(0)
-        task = replacePlaceholders(task)
-        usedTasks.add(task)
-        _currentTask.value = task
     }
 
+    private fun createGameTasks(tasks: List<String>) {
+        for (task in tasks) {
+            gameTasks.addValue(replacePlaceholders(task))
+        }
+    }
+
+    // TODO {player} placeholder is not replaced when there are not enough players
     private fun replacePlaceholders(task: String): String {
         val players = _players.value
         val taskPlayerCount = task.split("player").size - 1
@@ -132,15 +131,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun showPreviousTask() {
-        if (_taskIndex.value > 0) {
-            _taskIndex.value -= 1
-            _currentTask.value = gameTasks[_taskIndex.value]
+        if (_gameEnded.value == true) {
             _gameEnded.value = false
+        } else if (_currentTask.value?.previous != null) {
+            _gameEnded.value = false
+            _currentTask.value = _currentTask.value!!.previous
         }
     }
 
     fun restartGame() {
-        _taskIndex.value = -1
         startGame()
     }
 }

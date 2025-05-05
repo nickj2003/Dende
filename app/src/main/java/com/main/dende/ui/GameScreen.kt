@@ -1,15 +1,11 @@
 package com.main.dende.ui
 
-import android.app.Activity
 import android.content.pm.ActivityInfo
-import android.os.Build
-import android.view.View
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
@@ -50,7 +46,7 @@ fun GameScreen(viewModel: GameViewModel) {
 
     val task by viewModel.currentTask.collectAsState()
     val gameEnded by viewModel.gameEnded.collectAsState()
-    val taskIndex by viewModel.taskIndex.collectAsState()
+    val totalTasks = viewModel.gameTasks.size
 
     Box(
         modifier = Modifier
@@ -67,13 +63,19 @@ fun GameScreen(viewModel: GameViewModel) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Game Over!", style = MaterialTheme.typography.headlineMedium)
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = viewModel::restartGame) {
-                    Text("Play Again")
+                Row {
+                    Button(onClick = viewModel::restartGame) {
+                        Text("Play Again")
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Button(onClick = viewModel::restartGame) {
+                        Text("Edit game")
+                    }
                 }
             }
         } else {
             Text(
-                text = task ?: "Loading...",
+                text = task?.value ?: "Loading... (Hopefully)",
                 style = MaterialTheme.typography.headlineMedium
             )
         }
@@ -86,7 +88,7 @@ fun GameScreen(viewModel: GameViewModel) {
         contentAlignment = Alignment.TopStart
     ) {
         if (!gameEnded) {
-            Text(text = "${taskIndex + 1}/20", style = MaterialTheme.typography.bodyLarge)
+            Text(text = "${task?.index?.plus(1) ?: 0}/${totalTasks}", style = MaterialTheme.typography.bodyLarge)
         }
     }
 
@@ -98,7 +100,7 @@ fun GameScreen(viewModel: GameViewModel) {
     ) {
         Button(
             onClick = { viewModel.showPreviousTask() },
-            enabled = taskIndex > 0
+            enabled = (task?.index ?: 0) > 0
         ) {
             Text("Back")
         }
