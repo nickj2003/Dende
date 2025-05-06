@@ -13,17 +13,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.main.dende.ui.component.DefaultButton
 import com.main.dende.viewModel.GameViewModel
 
 @Composable
 fun GameScreen(viewModel: GameViewModel) {
     val activity = LocalActivity.current
     val window = activity?.window
-
-    if (window != null) {
-        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
-        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-    }
 
     // Force landscape orientation
     DisposableEffect(Unit) {
@@ -98,7 +94,7 @@ fun GameScreen(viewModel: GameViewModel) {
             .padding(16.dp),
         contentAlignment = Alignment.BottomStart
     ) {
-        Button(
+        DefaultButton(
             onClick = { viewModel.showPreviousTask() },
             enabled = (task?.index ?: 0) > 0
         ) {

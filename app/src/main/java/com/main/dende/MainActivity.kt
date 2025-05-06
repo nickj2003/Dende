@@ -46,8 +46,6 @@ fun App() {
 
     when {
         players.isEmpty() -> {
-            Log.d("testingSome", ButtonDefaults.buttonColors().contentColor.value.toString())
-            print(ButtonDefaults.buttonColors().toString())
             PlayerEntryScreen(onPlayersEntered = viewModel::setPlayers)
         }
 

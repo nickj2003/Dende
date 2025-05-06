@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.main.dende.ui.component.DefaultButton
 
 @Composable
 fun CategorySelectionScreen(
@@ -43,7 +44,7 @@ fun CategorySelectionScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = onConfirm, enabled = selectedCategories.isNotEmpty()) {
+        DefaultButton(onClick = onConfirm, enabled = selectedCategories.isNotEmpty()) {
             Text("Continue")
         }
     }

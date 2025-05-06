@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.main.dende.ui.component.DefaultButton
 
 @Composable
 fun PlayerEntryScreen(onPlayersEntered: (List<String>) -> Unit) {
@@ -20,7 +21,7 @@ fun PlayerEntryScreen(onPlayersEntered: (List<String>) -> Unit) {
         Row {
             TextField(value = currentName, onValueChange = { currentName = it }, label = { Text("Name") })
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
+            DefaultButton(onClick = {
                 if (currentName.isNotBlank()) {
                     players.add(currentName.trim())
                     currentName = ""
@@ -34,7 +35,7 @@ fun PlayerEntryScreen(onPlayersEntered: (List<String>) -> Unit) {
         players.forEach { Text(it) }
 
         Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = { onPlayersEntered(players) }, enabled = players.isNotEmpty()) {
+        DefaultButton(onClick = { onPlayersEntered(players) }, enabled = players.isNotEmpty()) {
             Text("Start Game")
         }
     }
