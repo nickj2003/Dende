@@ -24,7 +24,7 @@ fun GameScreen(viewModel: GameViewModel) {
     // Force landscape orientation
     DisposableEffect(Unit) {
         // Lock orientation to landscape
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
 
         // Enable immersive mode once
         WindowCompat.setDecorFitsSystemWindows(window, false)

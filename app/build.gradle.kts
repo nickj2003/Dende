@@ -36,7 +36,6 @@ android {
     }
     buildFeatures {
         compose = true
-//        viewBinding = true
     }
 }
 
@@ -58,6 +57,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-    implementation("androidx.core:core:1.16.0")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.core)
+    implementation(libs.androidx.navigation.compose)
 }
