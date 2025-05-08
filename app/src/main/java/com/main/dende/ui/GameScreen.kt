@@ -13,11 +13,16 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.navigation.NavHostController
+import com.main.dende.navigation.Screen
 import com.main.dende.ui.component.DefaultButton
 import com.main.dende.viewModel.GameViewModel
 
 @Composable
-fun GameScreen(viewModel: GameViewModel) {
+fun GameScreen(
+    viewModel: GameViewModel,
+    navController: NavHostController
+) {
     val activity = LocalActivity.current
     val window = activity?.window
 
