@@ -1,16 +1,20 @@
 package com.main.dende.ui
 
+import android.content.pm.ActivityInfo
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.main.dende.ui.component.DefaultButton
+import com.main.dende.utils.LockOrientation
 
 @Composable
 fun PlayerEntryScreen(onPlayersEntered: (List<String>) -> Unit) {
     var currentName by remember { mutableStateOf("") }
     val players = remember { mutableStateListOf<String>() }
+
+    LockOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT)
 
     Column(
         modifier = Modifier

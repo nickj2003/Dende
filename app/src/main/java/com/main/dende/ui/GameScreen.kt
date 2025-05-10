@@ -1,6 +1,7 @@
 package com.main.dende.ui
 
 import android.content.pm.ActivityInfo
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +17,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import com.main.dende.navigation.Screen
 import com.main.dende.ui.component.DefaultButton
+import com.main.dende.utils.LockOrientation
 import com.main.dende.viewModel.GameViewModel
 
 @Composable
@@ -23,31 +25,14 @@ fun GameScreen(
     viewModel: GameViewModel,
     navController: NavHostController
 ) {
-    val activity = LocalActivity.current
-    val window = activity?.window
-
-    // Force landscape orientation
-    DisposableEffect(Unit) {
-        // Lock orientation to landscape
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-
-        // Enable immersive mode once
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        val controller = WindowCompat.getInsetsController(window, window?.decorView)
-        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        controller.hide(WindowInsetsCompat.Type.systemBars())
-
-        onDispose {
-            // Unlock orientation and restore system bars
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-            WindowCompat.setDecorFitsSystemWindows(window, true)
-            controller.show(WindowInsetsCompat.Type.systemBars())
-        }
-    }
-
     val task by viewModel.currentTask.collectAsState()
     val gameEnded by viewModel.gameEnded.collectAsState()
     val totalTasks = viewModel.gameTasks.size
+
+    LockOrientation(
+        orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+        immersive = true
+    )
 
     Box(
         modifier = Modifier
