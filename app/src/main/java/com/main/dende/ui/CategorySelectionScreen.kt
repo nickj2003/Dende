@@ -5,8 +5,30 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.main.dende.ui.component.DefaultButton
+
+
+@Preview(showBackground = true)
+@Composable
+fun CategorySelectionScreen() {
+    val allCategories = listOf("Normal", "Games")
+    val selectedCategories = remember { mutableStateListOf("Games") }
+
+    CategorySelectionScreen(
+        allCategories = allCategories,
+        selectedCategories = selectedCategories,
+        onCategoryToggle = { category ->
+            if (selectedCategories.contains(category)) {
+                selectedCategories.remove(category)
+            } else {
+                selectedCategories.add(category)
+            }
+        },
+        onConfirm = {}
+    )
+}
 
 @Composable
 fun CategorySelectionScreen(
